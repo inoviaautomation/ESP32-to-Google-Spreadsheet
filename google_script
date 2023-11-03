@@ -32,19 +32,19 @@ function doGet(e) {
       //Logger.log(param + ':' + e.parameter[param]);
       switch (param) {
       
-        case 'voltage': // User Name
+        case 'voltage': // 
        rowData[2] = value;
         break;
           
-        case 'current': // Duration of use
+        case 'current': // 
        rowData[3] = value;
         break;
             
-        case 'power': //Machine type
+        case 'power': //
        rowData[4] = value;
         break;
           
-        case 'units': // Materil
+        case 'units': // 
        rowData[5] = value;
         break;
          
