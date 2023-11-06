@@ -9,7 +9,7 @@
 #include <BlynkSimpleEsp32.h>
 #define echoPin 2               // CHANGE PIN NUMBER HERE IF YOU WANT TO USE A DIFFERENT PIN
 #define trigPin 14               // CHANGE PIN NUMBER HERE IF YOU WANT TO USE A DIFFERENT PIN
-long duration, distance;
+long duration, distance, value1, value2;
 #include <SPI.h>
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
@@ -62,33 +62,27 @@ void loop(){
   digitalWrite(trigPin, LOW);
   duration = pulseIn(echoPin, HIGH);
   distance = duration / 58.2;
+  value1 = duration / 68.2;
+  value2 = duration / 48.2;
   String disp = String(distance);
 
-  Serial.print("Distance: ");
+  Serial.print("Distance" );
   Serial.print(disp);
-  Serial.println(" cm");
+  Serial.print(value1);
+  Serial.print(value2);
+  Serial.println("cm");
   delay(500);
 
 
- // float mainTemp =(distance);
- // float decimalTemp = (1/1);
+  float mainTemp =(distance);
+  float decimalTemp = (11);
   float temp = (distance);
   displayTemp(temp);
   delay(500);
   Blynk.virtualWrite(V0,disp);
 
-//GOOGLE SPREADSHEET
- //float distance = getLightPercentage();
- // float temp = getTemperature();
-  //String temp_s(temp);
- // String lightPer_s(lightpercentage);
-  //String(distance);
-  //String lightPer_s(distance);
-  //float lightPer_s = distance();
-  //Serial.println(acvoltage);
-
-  String urlFinal = "https://script.google.com/macros/s/"+GOOGLE_SCRIPT_ID+"/exec?"+"voltage="+ String(temp)+ "&current=" + String(temp)+ "&power=" + String(temp)+ "&units=" + String(temp);
-  //  Serial.print("POST data to spreadsheet:");
+  String urlFinal = "https://script.google.com/macros/s/"+GOOGLE_SCRIPT_ID+"/exec?"+"voltage="+ String(temp)+ "&current=" + String(value1)+ "&power=" + String(value2)+ "&units=" + String(temp);
+   //  Serial.print("POST data to spreadsheet:");
     Serial.println(urlFinal);
     HTTPClient http;
     http.begin(urlFinal.c_str());
@@ -101,7 +95,7 @@ void loop(){
     String payload;
     if (httpCode > 0) {
         payload = http.getString();
-        Serial.println("Payload: "+payload);    
+        Serial.println("Payload: "+payload);  
     }
     //---------------------------------------------------------------------
     http.end();
