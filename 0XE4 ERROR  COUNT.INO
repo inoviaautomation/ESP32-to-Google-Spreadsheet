@@ -33,14 +33,36 @@ void loop() {
       mb.task();
       delay(100);
     }
-    Serial.println("Register Values ");
-    Serial.println(val[0]);
-    Serial.println(val[1]);
-  float voltage= InttoFloat(val[1],val[0]);
+    float voltage= InttoFloat(val[1],val[0]);
+    
+    mb.readHreg(1, 156, val, 2, cb); // Slave id is 1 and register address is 3926 and 
+    //we are reading 2 bytes from the register and saving in val
+    while(mb.slave()) { // Check if transaction is active
+      mb.task();
+      delay(100);
+    }
+    float frequency= InttoFloat(val[1],val[0]);
+    
+    mb.readHreg(1, 158, val, 2, cb); // Slave id is 1 and register address is 3926 and 
+    //we are reading 2 bytes from the register and saving in val
+    while(mb.slave()) { // Check if transaction is active
+      mb.task();
+      delay(100);
+    }
+    //Serial.println("Register Values ");
+   // Serial.println(val[0]);
+    //Serial.println(val[1]);
+  float Wh= InttoFloat(val[1],val[0]);
   Serial.println("Voltage= ");
   Serial.print(voltage);
   Serial.println("V");
-
-      }
+  Serial.println("Wh= ");
+  Serial.print(Wh);
+  Serial.println("Wh");
+  Serial.println("frequency= ");
+  Serial.print(frequency);
+  Serial.println("Hz");
+   }
+      
   delay(1000);
-}
+  }
