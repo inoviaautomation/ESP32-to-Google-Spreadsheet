@@ -24,6 +24,12 @@ const char* pass = "Aaba1234"; //--> Your wifi password.
 const char* host = "script.google.com";
 const int httpsPort = 443;
 int myGlobalVariable; // Declare a global variable
+unsigned long loopTimer = 0;
+unsigned long sendDataTimer = 0;
+const unsigned long loopInterval = 100; // Time interval for the loop function (in milliseconds)
+const unsigned long sendDataInterval = 30000; // Time interval for the sendData function (in milliseconds)
+
+
 //----------------------------------------
 WiFiClientSecure client; //--> Create a WiFiClientSecure object.
 String GAS_ID = "AKfycbzr72yNDS6KW2qI1-JDilUr4lUR0VR-wReDiWR_1vvDuU2RYsFocn6ax9Z7TcuumMHX"; //--> spreadsheet script ID
@@ -45,8 +51,8 @@ bool cb(Modbus::ResultCode event, uint16_t transactionId, void* data) { // Callb
     Serial.println("Wrong");
     
   }else{
-    Serial.print(event);
-    Serial.println("Right");
+    // Serial.print(event);
+    // Serial.println("Right");
     myGlobalVariable = event;
     }
   // if(event != 228){
@@ -81,6 +87,12 @@ uint16_t val[2];
 
 void loop() {
   //vtgL_N-140, vtgL_L-132, amp-148, Watt-100,freq-156 ,wh-158
+  unsigned long currentMillis = millis();
+
+  // Execute the loop code when the time interval is reached
+  if (currentMillis - loopTimer >= loopInterval) {
+    loopTimer = currentMillis;
+
 
   if (!mb.slave() && myGlobalVariable != 228) 
     {
@@ -133,13 +145,12 @@ void loop() {
      float wh= InttoFloat(val[1],val[0]);
 
 if(myGlobalVariable != 228){
-   Blynk.virtualWrite(V0,voltage);
-    Blynk.virtualWrite(V1,voltageL);
-    Blynk.virtualWrite(V2,amp);
-    Blynk.virtualWrite(V3,wt);
-    Blynk.virtualWrite(V4,frq);
-    Blynk.virtualWrite(V5,wh);
-
+  Blynk.virtualWrite(V0,voltage);
+  Blynk.virtualWrite(V1,voltageL);
+  Blynk.virtualWrite(V2,amp);
+  Blynk.virtualWrite(V3,wt);
+  Blynk.virtualWrite(V4,frq);
+  Blynk.virtualWrite(V5,wh);
 
   Serial.println("Voltage= ");
   Serial.print(voltage);
@@ -154,16 +165,23 @@ if(myGlobalVariable != 228){
    
   sendData(voltage, voltageL, amp, wt ,frq, wh);
 
-  delay(100);
+  delay(150);
   }
   }
+}
 
   
 // Subroutine for sending data to Google Sheets
 void sendData
  (float v, float v2, float a, float wt, float fr, float kwh) {
+  unsigned long currentMillis = millis();
+
+  // Execute the sendData code when the time interval is reached
+  if (currentMillis - sendDataTimer >= sendDataInterval) 
+  {
+    sendDataTimer = currentMillis;
   if(myGlobalVariable != 228){
-  delay(30000);
+  delay(50);
 
   Serial.println("==========");
   // Serial.print("connecting to ");
@@ -207,21 +225,21 @@ void sendData
       break;
     }
   }
-  String line = client.readStringUntil('\n');
-  if (line.startsWith("{\"state\":\"success\"")) {
-    Serial.println("esp8266/Arduino CI successfull!");
-  } else {
-    Serial.println("esp8266/Arduino CI has failed");
-  }
-  Serial.print("reply was : ");
-  Serial.println(line);
-  Serial.println("closing connection");
-  Serial.println("==========");
-  Serial.println();
+  // String line = client.readStringUntil('\n');
+  // if (line.startsWith("{\"state\":\"success\"")) {
+  //   Serial.println("esp8266/Arduino CI successfull!");
+  // } else {
+  //   Serial.println("esp8266/Arduino CI has failed");
+  // }
+  // Serial.print("reply was : ");
+  // Serial.println(line);
+  // Serial.println("closing connection");
+  // Serial.println("==========");
+  // Serial.println();
   //----------------------------------------
   }else{
 
   }
   
   // }
-} 
+}} 
